@@ -2,6 +2,46 @@
 
 Complete and automated guide to root the **Motorola G8 Plus (doha)** with **LineageOS 22.1** using **APatch v0.12.2**.
 
+---
+
+## ⚠️ IMPORTANT DISCLAIMERS
+
+### Rooting & Bootloader Unlock Risks
+
+**BEFORE PROCEEDING, understand these permanent consequences:**
+
+- **Data Wipe:** Unlocking bootloader will **ERASE ALL DATA** with no recovery option
+- **Warranty Void:** Bootloader unlock and rooting **VOIDS WARRANTY** permanently
+- **Device Risk:** Incorrect procedure can **BRICK** (permanently disable) your device
+- **Security:** Rooted device reduces security; malware can gain root access
+- **Updates:** System updates may not work; may require re-flashing custom ROM
+- **Liability:** This guide and its tools are provided AS-IS without any guarantees
+
+**This repository, its authors, and contributors are NOT responsible for:**
+- Data loss or device damage
+- Warranty consequences
+- Security vulnerabilities introduced by rooting
+- Issues with third-party tools (APatch, LineageOS, or other modifications
+
+### Third-Party Tools & Projects
+
+This repository uses or references third-party projects:
+
+- **APatch** - Third-party root tool (not affiliated with Motorola)
+- **LineageOS** - Custom ROM (not affiliated with Motorola)
+- **Motorola Bootloader Unlock Portal** - Official Motorola service
+
+Each has its own license and terms. Refer to their respective documentation.
+
+### This Repository
+
+- NOT affiliated with Motorola, Google, or any manufacturer
+- Tested specifically on **Moto G8 Plus (doha)** with **LineageOS 22.1**
+- Procedures may differ significantly on other devices
+- Community contributions for other devices are welcome (see [ADAPTATION.md](ADAPTATION.md))
+
+---
+
 ## ⚠️ Prerequisites
 
 - **Device:** Motorola G8 Plus (XT2019-2, codename: doha)
@@ -207,6 +247,74 @@ Completely bypasses bootloader by writing directly to `/dev/block/mmcblk0p54` wi
 
 ---
 
+## � Bootloader Unlock
+
+**If your bootloader is NOT yet unlocked**, refer to [BOOTLOADER_UNLOCK.md](BOOTLOADER_UNLOCK.md) for:
+- Complete step-by-step Motorola bootloader unlock process
+- Automated unlock script: `bash scripts/unlock_bootloader.sh`
+- Troubleshooting unlock failures
+- Understanding Motorola's unlock portal
+
+**Warning:** Bootloader unlock **erases all device data** permanently and **voids warranty**.
+
+---
+
+## 🌍 Adapting This Repository for Other Devices
+
+This guide is **specifically tested for Moto G8 Plus (doha)** but the concepts may apply to other devices:
+
+### ✅ Likely Compatible (Similar Motorola Bootloader)
+- Other Moto G8 variants (G8, G8 Play, G8 Power)
+- Moto G9 series
+- Other recent Motorola devices with MBM bootloader
+- **Procedure will differ** - consult your device's XDA thread
+
+### ⚠️ Considerations for Other Devices
+1. **Bootloader Type:** Different manufacturers have different bootloaders
+   - Motorola: Use Motorola unlock portal + `dd` method
+   - Samsung: Different unlock process, Knox challenges
+   - Xiaomi: Uses fastboot unlock portal
+   - Others: Varies significantly
+   
+2. **Partition Names:** The partition name `/dev/block/mmcblk0p54` is **device-specific**
+   - Get correct partition name: Check XDA thread for your device
+   - Incorrect partition = potential brick
+   
+3. **ROM Availability:** LineageOS availability varies by device
+   - Check: [LineageOS Device List](https://wiki.lineageos.org/devices/)
+   - Some devices have no official builds
+   
+4. **Root Methods:** APatch may not be available or stable for all configurations
+   - Alternatives: Magisk, KernelSU, KindaRoot
+   - Test on non-critical device first
+
+### 🔧 Adapting These Scripts
+
+This repository can be adapted for other devices:
+
+1. **Fork or clone this repository**
+2. **Modify for your device:**
+   - Create branch: `git checkout -b device/motorola-g9`
+   - Update partition paths in `scripts/setup_apatch.sh`
+   - Update device names in documentation
+   - Test thoroughly on your device
+   
+3. **Contribute back:**
+   - Add device-specific branch
+   - Submit pull request with clear documentation
+   - Help other users with same device
+
+**Template for device adaptation:**
+```bash
+# Example: Adapting for Moto G9
+# 1. Verify partition: adb shell cat /proc/cmdline | grep -o 'slot=[ab]'
+# 2. Get partition info: adb shell ls -la /dev/block/mmcblk0p*
+# 3. Create device-specific docs and scripts
+# 4. Test extensively before sharing
+```
+
+---
+
 ## 📄 License
 
 MIT License - See `LICENSE` for full details.
@@ -226,12 +334,13 @@ Use freely, modify and distribute while crediting the original source.
 ## 📞 Support
 
 For specific issues:
-1. Check Troubleshooting above
+1. Check [Troubleshooting](TROUBLESHOOTING.md) above
 2. Review logs: `adb shell "logcat -d | grep -i 'apatch\|kpatch\|su'"`
 3. Report at [APatch Issues](https://github.com/bmax121/APatch/issues)
+4. For device adaptation questions, open an issue in this repository
 
 ---
 
 **Last updated:** January 14, 2026
-**Version:** 1.0
+**Version:** 1.1 (Added bootloader unlock guide, adaptation notes, and disclaimers)
 **Status:** ✅ Tested and Functional
