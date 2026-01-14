@@ -1,35 +1,35 @@
-# Notas Técnicas - Root Doha APatch
+# Technical Notes - Root Doha APatch
 
-## Detalles de la Implementación
+## Implementation Details
 
-### Device Target
-- **Modelo:** Motorola Moto G8 Plus
+### Target Device
+- **Model:** Motorola Moto G8 Plus
 - **Codename:** doha
 - **SKU:** XT2019-2
 - **Bootloader:** MBM-3.0-doha_retail-f9b10e522bd-210802
 
-### ROM Objetivo
+### Target ROM
 - **OS:** LineageOS 22.1
 - **Android:** Android 15 (API 35)
 - **Build:** 2025-03-18 (UNOFFICIAL-amogus_doha)
-- **Kernel:** Linux 4.14.190+ con SELinux
+- **Kernel:** Linux 4.14.190+ with SELinux
 
 ### Root Tool
-- **Herramienta:** APatch
-- **Versión:** v0.12.2 (build 11142)
-- **Repositorio:** https://github.com/bmax121/APatch
-- **Licencia:** GPL-3.0
+- **Tool:** APatch
+- **Version:** v0.12.2 (build 11142)
+- **Repository:** https://github.com/bmax121/APatch
+- **License:** GPL-3.0
 
-### Método: ¿Por qué `dd` y no fastboot?
+### Method: Why `dd` and not fastboot?
 
-#### Limitación de Fastboot (❌ NO FUNCIONA)
+#### Fastboot Limitation (❌ DOESN'T WORK)
 
-El bootloader Motorola MBM-3.0 implementa `Preflash validation` que:
-- Verifica firma de boot.img **ANTES** de flashear
-- Rechaza cualquier imagen modificada
-- No puede ser deshabilitado incluso con bootloader desbloqueado
+Motorola MBM-3.0 bootloader implements `Preflash validation` that:
+- Verifies boot.img signature **BEFORE** flashing
+- Rejects any modified image
+- Cannot be disabled even with unlocked bootloader
 
-**Evidencia:**
+**Evidence:**
 ```
 fastboot flash boot_b apatch_patched.img
 target reported max download size of 536870912 bytes
@@ -41,171 +41,171 @@ FAILED (remote failure)
 fastboot: error: Command failed
 ```
 
-#### Solución: `dd` vía ADB Root (✅ FUNCIONA)
+#### Solution: `dd` via ADB Root (✅ WORKS)
 
-**Flujo:**
-1. `adb root` → Obtener acceso root en ADB
-2. `adb shell dd if=boot_patched.img of=/dev/block/mmcblk0p54` → Escribir directamente
-3. Bypasea completamente validación del bootloader
-4. Bootea normalmente con kernel parchado
+**Flow:**
+1. `adb root` → Get root access in ADB
+2. `adb shell dd if=boot_patched.img of=/dev/block/mmcblk0p54` → Write directly
+3. Completely bypasses bootloader validation
+4. Boots normally with patched kernel
 
-**Ventajas:**
-- Evita validación de firma
-- Sin interacción del bootloader
-- Acceso root inmediato
-- Aplicable a ROMs personalizadas
+**Advantages:**
+- Avoids signature validation
+- No bootloader interaction
+- Immediate root access
+- Applicable to custom ROMs
 
-### Flujo de Instalación
+### Installation Flow
 
 ```
 ┌─────────────────────────────┐
-│ ROM Limpio (LineageOS 22.1) │
+│ Clean ROM (LineageOS 22.1)  │
 └──────────────┬──────────────┘
                │
                ▼
       ┌────────────────┐
-      │ Habilita ADB + │
-      │ Superusuario   │
+      │ Enable ADB +   │
+      │ Superuser      │
       └────────┬───────┘
                │
                ▼
       ┌──────────────────────┐
-      │ Extrae boot.img      │
-      │ (de slot activo)     │
+      │ Extract boot.img     │
+      │ (from active slot)   │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
-      │ Instala APatch.apk   │
+      │ Install APatch.apk   │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
       │ [MANUAL]             │
-      │ Parchea boot en app  │
-      │ APatch selecciona    │
-      │ boot.img y lo parchea│
+      │ Patch boot in app    │
+      │ APatch selects       │
+      │ boot.img and patches │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
-      │ Flashea con dd:      │
+      │ Flash with dd:       │
       │ /data/local/tmp/... →│
       │ /dev/block/mmcblk... │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
-      │ Rebootea con boot    │
-      │ parchado en slot     │
+      │ Reboot with patched  │
+      │ boot in slot         │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
       │ [MANUAL]             │
-      │ APatch "Instalar"    │
-      │ Instala su binario   │
+      │ APatch "Install"     │
+      │ Install su binary    │
       └────────┬─────────────┘
                │
                ▼
       ┌──────────────────────┐
-      │ ✓ ROOT FUNCIONAL     │
-      │ ✓ ROOT PERSISTENTE   │
+      │ ✓ ROOT FUNCTIONAL    │
+      │ ✓ ROOT PERSISTENT    │
       └──────────────────────┘
 ```
 
-### Particiones del Device
+### Device Partitions
 
 ```
-Partición   | Número | Función
+Partition   | Number | Function
 ------------|--------|-------------------
 boot_a      | p53    | Kernel + Ramdisk A
 boot_b      | p54    | Kernel + Ramdisk B
-system      | p37/71 | Sistema (A/B)
+system      | p37/71 | System (A/B)
 vendor      | p38/72 | Vendor (A/B)
 product     | p39/73 | Product (A/B)
-...         | ...    | Datos, cache, etc
+...         | ...    | Data, cache, etc
 ```
 
-**Nota:** Moto G8 Plus usa **dual-slot A/B**, necesario detectar slot activo con:
+**Note:** Moto G8 Plus uses **dual-slot A/B**, need to detect active slot with:
 ```bash
-adb shell "getprop ro.boot.slot_suffix"  # Devuelve "_a" o "_b"
+adb shell "getprop ro.boot.slot_suffix"  # Returns "_a" or "_b"
 ```
 
-### Archivos Generados
+### Generated Files
 
-Durante la instalación se crean:
-- `boot_a.img` o `boot_b.img` - Boot original extraído
-- `boot_patched_a.img` o `boot_patched_b.img` - Boot parchado
+During installation, created:
+- `boot_a.img` or `boot_b.img` - Original extracted boot
+- `boot_patched_a.img` or `boot_patched_b.img` - Patched boot
 
-### Binarios Instalados por APatch
+### Binaries Installed by APatch
 
 ```
-/system/bin/su                 - Binario su para root
+/system/bin/su                 - su binary for root
 /data/adb/ap/bin/apd           - APatch daemon
-/data/adb/ap/bin/magiskboot    - Herramienta de boot
-/data/adb/ap/bin/magiskpolicy  - Política SELinux
+/data/adb/ap/bin/magiskboot    - Boot tool
+/data/adb/ap/bin/magiskpolicy  - SELinux policy
 ```
 
 ### SELinux Context
 
-- **Antes:** `u:r:init:s0` (init context)
-- **Después:** `u:r:magisk:s0` (APatch usa contexto Magisk para compatibilidad)
+- **Before:** `u:r:init:s0` (init context)
+- **After:** `u:r:magisk:s0` (APatch uses Magisk context for compatibility)
 
-### Logs Útiles
+### Useful Logs
 
-**Verificar kernel patch cargado:**
+**Verify kernel patch loaded:**
 ```bash
 adb shell "dmesg | grep -i 'kpatch\|apatch'"
 ```
 
-**Verificar binarios de su:**
+**Verify su binaries:**
 ```bash
 adb shell "which su && su -c 'id'"
 ```
 
-**Recovery log (si es necesario):**
+**Recovery log (if needed):**
 ```bash
 adb shell "cat /tmp/recovery.log"
 ```
 
-### Limitaciones Conocidas
+### Known Limitations
 
-1. **APatch requiere instalación manual en cada prime reboot**
-   - Solución: Presionar "Instalar" en la app después del primer reboot
+1. **APatch requires manual install on first reboot**
+   - Solution: Press "Install" in app after first reboot
 
-2. **Bootloader MBM-3.0 rechaza fastboot**
-   - Solución: Usar `dd` directo vía ADB root
+2. **Bootloader MBM-3.0 rejects fastboot**
+   - Solution: Use direct `dd` via ADB root
 
-3. **ROM debe ser actualizable via OTA**
-   - LineageOS 22.1 soporta OTA correctamente
-   - APatch preserva OTA capability
+3. **ROM must be OTA-updatable**
+   - LineageOS 22.1 supports OTA correctly
+   - APatch preserves OTA capability
 
-### Testing Realizado ✓
+### Testing Performed ✓
 
-- ✓ Device bootea normalmente con kernel parchado
-- ✓ Root funcional inmediatamente post-patch
-- ✓ Root persiste después de múltiples reboots
-- ✓ APatch app reporta "Installed" correctamente
-- ✓ `su -c 'id'` retorna uid=0(root) esperado
-- ✓ SELinux context correcto: `u:r:magisk:s0`
-- ✓ LineageOS ROM intacta, sin corrupción
-- ✓ Recuperable si falla (volver a fastboot + ROM)
+- ✓ Device boots normally with patched kernel
+- ✓ Root functional immediately post-patch
+- ✓ Root persists after multiple reboots
+- ✓ APatch app reports "Installed" correctly
+- ✓ `su -c 'id'` returns expected uid=0(root)
+- ✓ Correct SELinux context: `u:r:magisk:s0`
+- ✓ LineageOS ROM intact, no corruption
+- ✓ Recoverable if fails (back to fastboot + ROM)
 
-### Alternativas Evaluadas ❌
+### Evaluated Alternatives ❌
 
-1. **Fastboot flash** - Rechazado por Preflash validation
+1. **Fastboot flash** - Rejected by Preflash validation
 2. **Recovery flashable ZIP** - Signature verification failed
-3. **Magisk** - Mismos problemas de fastboot
-4. **KernelSU** - No compilado en kernel LineageOS
-5. **Superuser.apk clásico** - Requiere compilación del kernel
+3. **Magisk** - Same fastboot issues
+4. **KernelSU** - Not compiled in LineageOS kernel
+5. **Classic Superuser.apk** - Requires kernel compilation
 
-### Conclusión
+### Conclusion
 
-El método `adb root + dd` es la **única solución viable** para este device/ROM debido a las restricciones del bootloader Motorola MBM-3.0.
+The `adb root + dd` method is the **only viable solution** for this device/ROM due to Motorola MBM-3.0 bootloader restrictions.
 
 ---
 
-**Último actualizado:** 2026-01-14
-**Versión:** 1.0
-**Autor:** root-doha-apatch contributors
+**Last updated:** 2026-01-14
+**Version:** 1.0
+**Author:** root-doha-apatch contributors

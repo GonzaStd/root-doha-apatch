@@ -1,145 +1,145 @@
 # 🚀 QUICKSTART - root-doha-apatch
 
-**Tiempo estimado:** 15-20 minutos
+**Estimated time:** 15-20 minutes
 
 ## TL;DR
 
 ```bash
-# 1. Prepara el device
-# - Instala LineageOS 22.1
-# - Habilita USB Debugging
-# - Conecta a PC
+# 1. Prepare the device
+# - Install LineageOS 22.1
+# - Enable USB Debugging
+# - Connect to PC
 
-# 2. Coloca APatch.apk en esta carpeta
+# 2. Place APatch.apk in this folder
 cp ~/Downloads/APatch.apk .
 
-# 3. Ejecuta el script
+# 3. Run the script
 bash scripts/setup_apatch.sh
 
-# 4. Sigue los pasos interactivos
-# (El script te guiará en cada paso)
+# 4. Follow the interactive steps
+# (The script will guide you at each step)
 
-# 5. ¡LISTO! Root persistente
+# 5. DONE! Persistent root
 adb shell "su -c 'id'"
 # uid=0(root) gid=0(root) ...
 ```
 
-## Requisitos Previos
+## Prerequisites
 
 - ✅ **Device:** Moto G8 Plus (doha)
 - ✅ **ROM:** LineageOS 22.1
-- ✅ **Bootloader:** Desbloqueado
-- ✅ **PC:** adb + fastboot configurados
-- ✅ **USB Debugging:** Habilitado en el device
+- ✅ **Bootloader:** Unlocked
+- ✅ **PC:** adb + fastboot configured
+- ✅ **USB Debugging:** Enabled on device
 
-## Pasos Detallados
+## Detailed Steps
 
-### 1️⃣ Prepara el Device
+### 1️⃣ Prepare the Device
 
 ```bash
-# En el device:
-# Ajustes > Información del dispositivo > tap "Número de compilación" 7 veces
-# Ajustes > Opciones de desarrollador > Depuración USB ✓
-# Conecta el cable USB
+# On the device:
+# Settings > About phone > tap "Build number" 7 times
+# Settings > Developer options > USB Debugging ✓
+# Connect USB cable
 ```
 
-### 2️⃣ Descarga APatch.apk
+### 2️⃣ Download APatch.apk
 
 ```bash
-# Descarga desde: https://github.com/bmax121/APatch/releases
-# O copias el que ya tienes
+# Download from: https://github.com/bmax121/APatch/releases
+# Or copy if you already have it
 cp /path/to/APatch.apk .
 ```
 
-### 3️⃣ Ejecuta el Script
+### 3️⃣ Run the Script
 
 ```bash
 bash scripts/setup_apatch.sh
 ```
 
-El script hará:
-- ✓ Extraer boot.img
-- ✓ Instalar APatch.apk
-- ✓ Guiarte en parcheo manual
-- ✓ Flashear boot parchado
-- ✓ Verificar root
-- ✓ Confirmar persistencia
+The script will:
+- ✓ Extract boot.img
+- ✓ Install APatch.apk
+- ✓ Guide you through manual patching
+- ✓ Flash patched boot
+- ✓ Verify root
+- ✓ Confirm persistence
 
-### 4️⃣ Durante la Ejecución
+### 4️⃣ During Execution
 
-Cuando el script lo indique:
+When the script prompts:
 
-**Paso A - Parchear en la app:**
-1. Abre APatch en el device
-2. "Select boot image" → elige el boot extraído
-3. "Patch" → espera a que termine
+**Step A - Patch in app:**
+1. Open APatch on device
+2. "Select boot image" → choose extracted boot
+3. "Patch" → wait for completion
 4. "OK"
-5. Vuelve y presiona ENTER en el script
+5. Come back and press ENTER in script
 
-**Paso B - Instalar persistente:**
-1. Abre APatch nuevamente
-2. "Instalar" → espera completación
+**Step B - Install persistent:**
+1. Open APatch again
+2. "Install" → wait for completion
 3. "OK"
 
-### 5️⃣ Verificar
+### 5️⃣ Verify
 
 ```bash
-# El script automáticamente verifica, pero puedes hacerlo manualmente:
+# Script automatically verifies, but you can check manually:
 adb shell "su -c 'id'"
-# Debe mostrar: uid=0(root)
+# Should show: uid=0(root)
 
-# Reboot adicional para confirmar persistencia:
+# Additional reboot to confirm persistence:
 adb reboot
 sleep 60
 adb shell "su -c 'id'"
-# Debe SEGUIR mostrando: uid=0(root)
+# Should STILL show: uid=0(root)
 ```
 
-## Troubleshooting Rápido
+## Quick Troubleshooting
 
-| Problema | Solución |
-|----------|----------|
-| `adb: device not found` | Habilita USB Debugging + Autoriza en device |
-| `permission denied` en dd | Ejecuta `adb root` antes |
-| APatch "Instalar" cada reboot | Presiona "Instalar" una 2da vez |
-| Device no bootea | Vuelve a fastboot + flashea ROM nuevamente |
-| Root desaparece | APatch requiere instalación persistente (Paso B) |
+| Problem | Solution |
+|---------|----------|
+| `adb: device not found` | Enable USB Debugging + Authorize device |
+| `permission denied` in dd | Run `adb root` first |
+| APatch "Install" every reboot | Press "Install" a 2nd time |
+| Device doesn't boot | Go back to fastboot + flash ROM again |
+| Root disappears | APatch requires persistent install (Step B) |
 
-## Archivos Importantes
+## Important Files
 
 ```
 .
-├── README.md           ← Documentación completa
-├── NOTES.md            ← Detalles técnicos
+├── README.md           ← Complete documentation
+├── NOTES.md            ← Technical details
 ├── LICENSE             ← MIT License
 └── scripts/
-    └── setup_apatch.sh ← Script principal (EJECUTA ESTO)
+    └── setup_apatch.sh ← Main script (RUN THIS)
 ```
 
-## Compatibilidad
+## Compatibility
 
 - ✅ Motorola G8 Plus (doha, XT2019-2)
 - ✅ LineageOS 22.1 (Android 15)
 - ✅ APatch v0.12.2+
-- ❌ Otros devices (adaptable pero no testeado)
+- ❌ Other devices (adaptable but not tested)
 
-## Después de Root
+## After Root
 
-Ahora puedes:
-- 📱 Instalar apps que requieren root
-- 🔐 Usar Magisk modules (si instalas Magisk después)
-- 🛡️ Modificar sistema con root access
-- 🔌 Usar ADB como superusuario
+Now you can:
+- 📱 Install apps requiring root
+- 🔐 Use Magisk modules (if you install Magisk later)
+- 🛡️ Modify system with root access
+- 🔌 Use ADB as superuser
 
-## ¿Necesitas Ayuda?
+## Need Help?
 
-1. Lee `README.md` para documentación completa
-2. Lee `NOTES.md` para detalles técnicos
-3. Revisa los logs: `adb logcat -d | grep -i apatch`
-4. Reporta en [APatch Issues](https://github.com/bmax121/APatch/issues)
+1. Read `README.md` for complete documentation
+2. Read `NOTES.md` for technical details
+3. Check logs: `adb logcat -d | grep -i apatch`
+4. Report at [APatch Issues](https://github.com/bmax121/APatch/issues)
 
 ---
 
-**Versión:** 1.0 | **Última actualización:** 2026-01-14 | **Estado:** ✅ Probado
+**Version:** 1.0 | **Last updated:** 2026-01-14 | **Status:** ✅ Tested
 
-**¡Comienza ahora: `bash scripts/setup_apatch.sh`**
+**Get started now: `bash scripts/setup_apatch.sh`**

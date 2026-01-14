@@ -1,107 +1,107 @@
-# Root Motorola G8 Plus con APatch
+# Root Motorola G8 Plus with APatch
 
-Guía completa y automatizada para rootear el **Motorola G8 Plus (doha)** con **LineageOS 22.1** usando **APatch v0.12.2**.
+Complete and automated guide to root the **Motorola G8 Plus (doha)** with **LineageOS 22.1** using **APatch v0.12.2**.
 
-## ⚠️ Requisitos Previos
+## ⚠️ Prerequisites
 
 - **Device:** Motorola G8 Plus (XT2019-2, codename: doha)
-- **ROM:** LineageOS 22.1 (UNOFFICIAL build, o similar)
-  - Descarga desde: [XDA Thread](https://xda-developers.com)
-- **Estado requerido:**
-  - Bootloader desbloqueado (`flashing_unlocked`)
-  - Verity deshabilitada (`vbmeta state: disabled`)
-  - Device en estado de firmware limpio (sin root previo)
-- **Herramientas en PC:**
-  - `adb` y `fastboot` configurados
-  - Python 3.x (opcional, para script mejorado)
+- **ROM:** LineageOS 22.1 (UNOFFICIAL build, or similar)
+  - Download from: [XDA Thread](https://xda-developers.com)
+- **Required State:**
+  - Bootloader unlocked (`flashing_unlocked`)
+  - Verity disabled (`vbmeta state: disabled`)
+  - Device in clean firmware state (no previous root)
+- **PC Tools:**
+  - `adb` and `fastboot` configured
+  - Python 3.x (optional, for enhanced script)
   - `git`
 
-## 📋 Compatibilidad Verificada
+## 📋 Verified Compatibility
 
 ✅ Motorola G8 Plus (doha, XT2019-2)
 ✅ LineageOS 22.1 (build 2025-03-18, UNOFFICIAL-amogus_doha)
 ✅ APatch v0.12.2 (build 11142)
-✅ Bootloader MBM-3.0 con Preflash validation habilitado
-✅ Kernel 4.14.190+ con SELinux
+✅ Bootloader MBM-3.0 with Preflash validation enabled
+✅ Kernel 4.14.190+ with SELinux
 
-**Nota:** Esta guía **NO** funcionará con fastboot directo debido a `Preflash validation` del bootloader Motorola. La solución es usar `dd` vía ADB root.
+**Note:** This guide **WILL NOT** work with direct fastboot due to `Preflash validation` on Motorola bootloader. The solution is to use `dd` via ADB root.
 
 ---
 
-## 🚀 Proceso de Instalación
+## 🚀 Installation Process
 
-### Paso 0: Preparación
+### Step 0: Preparation
 
-1. **Descarga los archivos necesarios:**
+1. **Download required files:**
    ```bash
-   # Descarga LineageOS 22.1 ROM
-   # Descarga APatch.apk desde: https://github.com/bmax121/APatch/releases
+   # Download LineageOS 22.1 ROM
+   # Download APatch.apk from: https://github.com/bmax121/APatch/releases
    ```
 
-2. **Instala ROM limpio en el device:**
-   - Rebootea a recovery
+2. **Install clean ROM on device:**
+   - Reboot to recovery
    - Wipe data/factory reset
-   - Flashea ROM vía sideload: `adb sideload lineage-22.1-*.zip`
-   - Rebootea a sistema
+   - Flash ROM via sideload: `adb sideload lineage-22.1-*.zip`
+   - Reboot to system
 
-3. **Habilita USB Debugging:**
-   - Ajustes > Sistema > Información del dispositivo
-   - Toca "Número de compilación" 7 veces
-   - Ajustes > Sistema > Opciones de desarrollador
-   - Activa "Depuración USB"
-   - Autoriza esta computadora en el pop-up
+3. **Enable USB Debugging:**
+   - Settings > System > About phone
+   - Tap "Build number" 7 times
+   - Settings > System > Developer options
+   - Enable "USB Debugging"
+   - Authorize this computer in the pop-up
 
-### Paso 1: Ejecutar el Script Automatizado
+### Step 1: Run the Automated Script
 
 ```bash
-# Coloca APatch.apk en la carpeta scripts/
+# Place APatch.apk in the scripts/ folder
 cd root-doha-apatch
 bash scripts/setup_apatch.sh
 ```
 
-El script hará automáticamente:
-- ✅ Extrae boot.img del slot activo
-- ✅ Copiar a la PC
-- ✅ Instalar APatch.apk en el device
-- ✅ Aguardar a que parchees el boot en la app
-- ✅ Flashear boot parchado vía `dd`
-- ✅ Rebootear
+The script will automatically:
+- ✅ Extract boot.img from active slot
+- ✅ Copy to PC
+- ✅ Install APatch.apk on device
+- ✅ Wait for you to patch boot in app
+- ✅ Flash patched boot via `dd`
+- ✅ Reboot
 
-### Paso 2: Manual - Parchear Boot en la App (⚙️ No automatizable)
+### Step 2: Manual - Patch Boot in App (⚙️ Not automatable)
 
-Cuando el script pausar y lo indique:
+When the script pauses and prompts:
 
-1. **En el device físicamente:**
-   - Abre la app **APatch**
-   - Presiona **"Select boot image"**
-   - Selecciona el boot.img que se copió
-   - Presiona **"Patch"**
-   - Espera a que termine (2-3 minutos)
-   - Presiona **"OK"** cuando termine
+1. **On the device physically:**
+   - Open **APatch** app
+   - Press **"Select boot image"**
+   - Select the copied boot.img
+   - Press **"Patch"**
+   - Wait for completion (2-3 minutes)
+   - Press **"OK"** when done
 
-2. **En la PC:**
-   - Presiona **ENTER** en el script cuando hayas terminado
+2. **On the PC:**
+   - Press **ENTER** in the script when finished
 
-### Paso 3: Instalación Persistente
+### Step 3: Persistent Installation
 
-Cuando el device rebootee después del flasheo:
+When device reboots after flashing:
 
-1. **Abre APatch nuevamente**
-2. **Presiona "Instalar"** (Install)
-3. Se ejecutará el instalador
-4. Presiona **"OK"**
+1. **Open APatch again**
+2. **Press "Install"** (Install)
+3. Installer will run
+4. Press **"OK"**
 
-### Paso 4: Verificación Final
+### Step 4: Final Verification
 
-El script ejecutará automáticamente:
+The script will automatically run:
 
 ```bash
-adb shell "su -c 'id && echo ROOT_VERIFICADO'"
+adb shell "su -c 'id && echo ROOT_VERIFIED'"
 ```
 
-Si ves `uid=0(root)` → ✅ **Root funcional**
+If you see `uid=0(root)` → ✅ **Root functional**
 
-### Paso 5: Confirmación de Persistencia
+### Step 5: Persistence Confirmation
 
 ```bash
 adb reboot
@@ -109,44 +109,44 @@ sleep 60
 adb shell "su -c 'id'"
 ```
 
-Si aún tiene `uid=0(root)` después del reboot → ✅ **ROOT PERSISTENTE - ¡COMPLETADO!**
+If still has `uid=0(root)` after reboot → ✅ **PERSISTENT ROOT - COMPLETED!**
 
 ---
 
-## 📝 Script de Automatización
+## 📝 Automation Script
 
-El script `scripts/setup_apatch.sh` incluye:
+The script `scripts/setup_apatch.sh` includes:
 
-1. **Verificación de requisitos** (adb, APatch.apk)
-2. **Extracción de boot.img** del device
-3. **Instalación de APatch.apk**
-4. **Pausa para parcheo manual** (guía interactiva)
-5. **Flasheo automático** del boot parchado con `dd`
-6. **Reboot y verificación** de root
+1. **Requirements verification** (adb, APatch.apk)
+2. **boot.img extraction** from device
+3. **APatch.apk installation**
+4. **Pause for manual patching** (interactive guide)
+5. **Automatic flashing** of patched boot with `dd`
+6. **Reboot and root verification**
 
-### Uso Manual (Sin Script)
+### Manual Usage (Without Script)
 
-Si prefieres hacerlo manualmente:
+If you prefer to do it manually:
 
 ```bash
-# 1. Extraer boot.img
+# 1. Extract boot.img
 adb root
 adb shell "dd if=/dev/block/bootdevice/by-name/boot_b of=/sdcard/boot.img bs=4M"
 adb pull /sdcard/boot.img ./
 
-# 2. Instalar APatch.apk
+# 2. Install APatch.apk
 adb install APatch.apk
 
-# 3. [MANUAL] Abre APatch, parchea boot.img, guarda como boot_patched.img
+# 3. [MANUAL] Open APatch, patch boot.img, save as boot_patched.img
 
-# 4. Flashear boot parchado
+# 4. Flash patched boot
 adb push boot_patched.img /data/local/tmp/
 adb shell "dd if=/data/local/tmp/boot_patched.img of=/dev/block/bootdevice/by-name/boot_b bs=4M && sync"
 adb reboot
 
-# 5. Después del reboot - Abre APatch y presiona "Instalar"
+# 5. After reboot - Open APatch and press "Install"
 
-# 6. Verificar
+# 6. Verify
 adb shell "su -c 'id'"
 adb reboot
 sleep 60
@@ -157,65 +157,65 @@ adb shell "su -c 'id'"
 
 ## ⚠️ Troubleshooting
 
-### Problema: `adb: device not found`
-- Solución: Habilita USB Debugging en Ajustes > Opciones de desarrollador
-- Autoriza esta computadora en el pop-up del device
+### Problem: `adb: device not found`
+- Solution: Enable USB Debugging in Settings > Developer options
+- Authorize this computer in device pop-up
 
-### Problema: `dd: permission denied`
-- Solución: Ejecuta `adb root` antes de `dd`
-- Verifica que `adb shell id` muestre `uid=0`
+### Problem: `dd: permission denied`
+- Solution: Run `adb root` before `dd`
+- Verify that `adb shell id` shows `uid=0`
 
-### Problema: Device no bootea después de flasheo
-- Es improbable pero si ocurre:
-  - Rebootea a recovery
-  - Flashea ROM completo nuevamente
-  - Vuelve al Paso 0
+### Problem: Device doesn't boot after flashing
+- Unlikely but if it happens:
+  - Reboot to recovery
+  - Flash complete ROM again
+  - Go back to Step 0
 
-### Problema: APatch muestra "Instalar" cada vez que rebootea
-- Solución: Presiona "Instalar" una segunda vez
-- Espera a que complete (puede tomar 1-2 minutos)
-- Los binarios se copiaran a `/system/bin/su`
+### Problem: APatch shows "Install" every reboot
+- Solution: Press "Install" a second time
+- Wait for completion (may take 1-2 minutes)
+- Binaries will be copied to `/system/bin/su`
 
-### Problema: Root desaparece después del reboot
-- Solución: APatch requiere instalación persistente
-  - Abre APatch después de cada primer reboot
-  - Presiona "Instalar" y espera completación
-  - Rebootea nuevamente para verificar
-
----
-
-## 🔄 ¿Por Qué Este Método?
-
-### Limitación de Fastboot (❌ No Funciona)
-
-El bootloader Motorola MBM-3.0 tiene `Preflash validation` habilitado, que **rechaza cualquier boot.img modificado** incluso con:
-- ✅ Bootloader desbloqueado
-- ✅ vbmeta deshabilitado  
-- ✅ Imagen correctamente formada
-
-Error típico: `Preflash validation failed`
-
-### Solución: `dd` vía ADB Root (✅ Funciona)
-
-Bypasea completamente el bootloader escribiendo directamente en `/dev/block/mmcblk0p54` sin pasar por validación fastboot.
-
-**Ventajas:**
-- Evita validación de firma del bootloader
-- Sin riesgos de soft-brick
-- Acceso root desde el inicio del sistema
-- Aplicable a cualquier ROM/kernel en slot activo
+### Problem: Root disappears after reboot
+- Solution: APatch requires persistent installation
+  - Open APatch after first reboot
+  - Press "Install" and wait for completion
+  - Reboot again to verify
 
 ---
 
-## 📄 Licencia
+## 🔄 Why This Method?
 
-MIT License - Ver `LICENSE` para detalles completos.
+### Fastboot Limitation (❌ Doesn't Work)
 
-Usa libremente, modifica y distribuye mientras cites la fuente original.
+Motorola MBM-3.0 bootloader has `Preflash validation` enabled, which **rejects any modified boot.img** even with:
+- ✅ Bootloader unlocked
+- ✅ vbmeta disabled  
+- ✅ Correctly formed image
+
+Typical error: `Preflash validation failed`
+
+### Solution: `dd` via ADB Root (✅ Works)
+
+Completely bypasses bootloader by writing directly to `/dev/block/mmcblk0p54` without fastboot validation.
+
+**Advantages:**
+- Avoids bootloader signature validation
+- No soft-brick risks
+- Root access from system start
+- Applicable to any ROM/kernel on active slot
 
 ---
 
-## 🙋 Créditos
+## 📄 License
+
+MIT License - See `LICENSE` for full details.
+
+Use freely, modify and distribute while crediting the original source.
+
+---
+
+## 🙋 Credits
 
 - **APatch**: [bmax121/APatch](https://github.com/bmax121/APatch)
 - **LineageOS**: [LineageOS Project](https://lineageos.org)
@@ -223,15 +223,15 @@ Usa libremente, modifica y distribuye mientras cites la fuente original.
 
 ---
 
-## 📞 Soporte
+## 📞 Support
 
-Para issues específicos:
-1. Verifica Troubleshooting arriba
-2. Revisa logs: `adb shell "logcat -d | grep -i 'apatch\|kpatch\|su'"`
-3. Reporta en [APatch Issues](https://github.com/bmax121/APatch/issues)
+For specific issues:
+1. Check Troubleshooting above
+2. Review logs: `adb shell "logcat -d | grep -i 'apatch\|kpatch\|su'"`
+3. Report at [APatch Issues](https://github.com/bmax121/APatch/issues)
 
 ---
 
-**Última actualización:** Enero 14, 2026
-**Versión:** 1.0
-**Status:** ✅ Probado y Funcional
+**Last updated:** January 14, 2026
+**Version:** 1.0
+**Status:** ✅ Tested and Functional

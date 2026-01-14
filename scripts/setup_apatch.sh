@@ -1,22 +1,22 @@
 #!/bin/bash
 
 #################################################################################
-# Setup APatch Root para Motorola G8 Plus (doha)
-# Automatiza la instalación de APatch con boot patching vía dd
+# Setup APatch Root for Motorola G8 Plus (doha)
+# Automates APatch installation with boot patching via dd
 #
-# Uso: bash setup_apatch.sh
+# Usage: bash setup_apatch.sh
 #################################################################################
 
 set -e
 
-# Colores
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Función para imprimir con color
+# Function to print with color
 print_status() {
     echo -e "${BLUE}[*]${NC} $1"
 }
@@ -34,55 +34,55 @@ print_warning() {
 }
 
 ask_continue() {
-    read -p "$(echo -e ${BLUE})[Presiona ENTER para continuar]${NC} " -r
+    read -p "$(echo -e ${BLUE})[Press ENTER to continue]${NC} " -r
 }
 
 #################################################################################
-# Verificaciones previas
+# Pre-flight checks
 #################################################################################
 
-print_status "Verificando requisitos..."
+print_status "Checking requirements..."
 
-# Verificar adb
+# Check adb
 if ! command -v adb &> /dev/null; then
-    print_error "adb no encontrado. Instala Android SDK Platform Tools."
+    print_error "adb not found. Install Android SDK Platform Tools."
     exit 1
 fi
-print_success "adb disponible"
+print_success "adb available"
 
-# Verificar APatch.apk
+# Check APatch.apk
 if [ ! -f "APatch.apk" ]; then
-    print_error "APatch.apk no encontrado en la carpeta actual"
-    print_status "Descárgalo desde: https://github.com/bmax121/APatch/releases"
+    print_error "APatch.apk not found in current folder"
+    print_status "Download from: https://github.com/bmax121/APatch/releases"
     exit 1
 fi
-print_success "APatch.apk encontrado"
+print_success "APatch.apk found"
 
-# Verificar conexión ADB
+# Check ADB connection
 if ! adb devices | grep -q "device"; then
-    print_error "Device no conectado o depuración USB no habilitada"
-    print_status "Pasos:"
-    print_status "1. Habilita USB Debugging en Ajustes > Opciones de desarrollador"
-    print_status "2. Autoriza esta computadora en el pop-up del device"
-    print_status "3. Ejecuta este script nuevamente"
+    print_error "Device not connected or USB Debugging not enabled"
+    print_status "Steps:"
+    print_status "1. Enable USB Debugging in Settings > Developer options"
+    print_status "2. Authorize this computer in device pop-up"
+    print_status "3. Run this script again"
     exit 1
 fi
-print_success "Device conectado"
+print_success "Device connected"
 
 DEVICE_SERIAL=$(adb devices | grep -E "^[A-Z0-9]+\s+device$" | awk '{print $1}')
 print_success "Device: $DEVICE_SERIAL"
 
 #################################################################################
-# PASO 1: Extraer boot.img
+# STEP 1: Extract boot.img
 #################################################################################
 
-print_status "PASO 1: Extrayendo boot.img del device..."
+print_status "STEP 1: Extracting boot.img from device..."
 
-# Detectar slot activo
+# Detect active slot
 SLOT=$(adb shell "getprop ro.boot.slot_suffix" | tr -d '\r')
-print_status "Slot activo: $SLOT"
+print_status "Active slot: $SLOT"
 
-# Mapeo de slot a partición
+# Slot to partition mapping
 if [ "$SLOT" = "_a" ]; then
     BOOT_PARTITION="/dev/block/bootdevice/by-name/boot_a"
     BOOT_PARTITION_NUM="53"
@@ -90,81 +90,81 @@ elif [ "$SLOT" = "_b" ]; then
     BOOT_PARTITION="/dev/block/bootdevice/by-name/boot_b"
     BOOT_PARTITION_NUM="54"
 else
-    print_error "Slot desconocido: $SLOT"
+    print_error "Unknown slot: $SLOT"
     exit 1
 fi
 
-# Activar ADB root
-print_status "Activando ADB root..."
+# Enable ADB root
+print_status "Enabling ADB root..."
 adb root > /dev/null 2>&1 || true
 sleep 2
 
-# Verificar root
+# Verify root
 if ! adb shell "id" | grep -q "uid=0"; then
-    print_error "No se pudo obtener permisos root en ADB"
+    print_error "Failed to obtain root permissions in ADB"
     exit 1
 fi
-print_success "ADB root activado"
+print_success "ADB root enabled"
 
-# Extraer boot.img
+# Extract boot.img
 BOOT_FILE="boot${SLOT}.img"
-print_status "Extrayendo boot.img desde $BOOT_PARTITION..."
+print_status "Extracting boot.img from $BOOT_PARTITION..."
 adb shell "dd if=$BOOT_PARTITION of=/data/local/tmp/boot.img bs=4M" > /dev/null 2>&1
 adb pull /data/local/tmp/boot.img "$BOOT_FILE" > /dev/null
 adb shell "rm /data/local/tmp/boot.img" > /dev/null 2>&1
 
 if [ ! -f "$BOOT_FILE" ]; then
-    print_error "No se pudo extraer boot.img"
+    print_error "Failed to extract boot.img"
     exit 1
 fi
 
 FILE_SIZE=$(du -h "$BOOT_FILE" | cut -f1)
-print_success "boot.img extraído: $BOOT_FILE ($FILE_SIZE)"
+print_success "boot.img extracted: $BOOT_FILE ($FILE_SIZE)"
 
 #################################################################################
-# PASO 2: Instalar APatch.apk
+# STEP 2: Install APatch.apk
 #################################################################################
 
-print_status "PASO 2: Instalando APatch.apk..."
+print_status "STEP 2: Installing APatch.apk..."
 
 if adb install APatch.apk | grep -q "Success"; then
-    print_success "APatch.apk instalado"
+    print_success "APatch.apk installed"
 else
-    print_warning "APatch.apk ya estaba instalado"
+    print_warning "APatch.apk was already installed"
 fi
 
 sleep 2
 
 #################################################################################
-# PASO 3: MANUAL - Parchear boot en la app (No automatizable)
+# STEP 3: MANUAL - Patch boot in app (Not automatable)
 #################################################################################
 
-print_warning "PASO 3: Parcheo Manual Requerido"
+print_warning "STEP 3: Manual Patching Required"
 print_status "=========================================="
 echo ""
-echo -e "${YELLOW}Sigue estos pasos EN EL DEVICE FÍSICAMENTE:${NC}"
+echo -e "${YELLOW}Follow these steps ON THE DEVICE PHYSICALLY:${NC}"
 echo ""
-echo "1. Abre la app ${BLUE}APatch${NC}"
-echo "2. En la pantalla principal, presiona ${BLUE}'Select boot image'${NC}"
-echo "3. Selecciona: ${YELLOW}$BOOT_FILE${NC}"
-echo "4. Presiona ${BLUE}'Patch'${NC} y espera (2-3 minutos)"
-echo "5. Cuando termine, presiona ${BLUE}'OK'${NC}"
-echo "6. La app mostrará: ${GREEN}'Boot image patched successfully'${NC}"
-echo "7. Guarda/exporta el boot parchado si es necesario"
+echo "1. Open ${BLUE}APatch${NC} app"
+echo "2. On main screen, press ${BLUE}'Select boot image'${NC}"
+echo "3. Select: ${YELLOW}$BOOT_FILE${NC}"
+echo "4. Press ${BLUE}'Patch'${NC} and wait (2-3 minutes)"
+echo "5. When done, press ${BLUE}'OK'${NC}"
+echo "6. App will show: ${GREEN}'Boot image patched successfully'${NC}"
+echo "7. Save/export patched boot if needed"
 echo ""
-print_status "Vuelve aquí cuando hayas terminado en el device"
+print_status "Come back here when finished on device"
 echo ""
 ask_continue
 
 #################################################################################
-# PASO 4: Copiar boot parchado y flashearlo
+# STEP 4: Copy and flash patched boot
 #################################################################################
 
-print_status "PASO 4: Extrayendo boot parchado del device..."
+print_status "STEP 4: Extracting patched boot from device..."
 
-# APatch típicamente guarda en /data/adb/ap/backup/
-# O puede estar en /sdcard/ o /data/
-# Intentamos encontrarlo
+# APatch typically saves to /data/adb/ap/backup/
+# Or can be in /sdcard/ or /data/
+# Try to find it
 
 PATCHED_BOOT_CANDIDATES=(
     "/data/adb/ap/backup/boot.img"
@@ -178,133 +178,133 @@ PATCHED_BOOT_PATH=""
 for path in "${PATCHED_BOOT_CANDIDATES[@]}"; do
     if adb shell "[ -f '$path' ]" 2>/dev/null; then
         PATCHED_BOOT_PATH="$path"
-        print_success "Boot parchado encontrado: $path"
+        print_success "Patched boot found: $path"
         break
     fi
 done
 
 if [ -z "$PATCHED_BOOT_PATH" ]; then
-    print_error "No se encontró boot parchado en el device"
-    print_status "Ubicaciones esperadas:"
+    print_error "No patched boot found on device"
+    print_status "Expected locations:"
     for path in "${PATCHED_BOOT_CANDIDATES[@]}"; do
         print_status "  - $path"
     done
-    print_status "Intenta exportar manualmente desde APatch y ejecuta:"
-    print_status "  adb pull <ruta_en_device> boot_patched.img"
+    print_status "Try exporting manually from APatch and run:"
+    print_status "  adb pull <path_on_device> boot_patched.img"
     exit 1
 fi
 
-# Copiar boot parchado
+# Copy patched boot
 adb pull "$PATCHED_BOOT_PATH" "boot_patched_${SLOT}.img" > /dev/null
-print_success "Boot parchado copiado: boot_patched_${SLOT}.img"
+print_success "Patched boot copied: boot_patched_${SLOT}.img"
 
-# Copiar al device para flashear
+# Copy to device for flashing
 adb push "boot_patched_${SLOT}.img" /data/local/tmp/boot_patched.img > /dev/null 2>&1
-print_success "Boot parchado copiado al device"
+print_success "Patched boot copied to device"
 
 #################################################################################
-# PASO 5: Flashear boot parchado con dd
+# STEP 5: Flash patched boot with dd
 #################################################################################
 
-print_status "PASO 5: Flasheando boot parchado..."
+print_status "STEP 5: Flashing patched boot..."
 
 if ! adb shell "dd if=/data/local/tmp/boot_patched.img of=/dev/block/mmcblk0p${BOOT_PARTITION_NUM} bs=4M && sync" > /dev/null 2>&1; then
-    print_error "Error al flashear boot"
+    print_error "Error flashing boot"
     exit 1
 fi
 
-print_success "Boot parchado flasheado correctamente"
+print_success "Patched boot flashed successfully"
 
-# Limpiar
+# Cleanup
 adb shell "rm /data/local/tmp/boot_patched.img" > /dev/null 2>&1
 
 #################################################################################
-# PASO 6: Rebootear
+# STEP 6: Reboot
 #################################################################################
 
-print_status "PASO 6: Rebooteando device..."
+print_status "STEP 6: Rebooting device..."
 adb reboot
 
-print_status "Esperando device (60 segundos)..."
+print_status "Waiting for device (60 seconds)..."
 sleep 60
 
 if ! adb devices | grep -q "device"; then
-    print_warning "Device no conectado aún, esperando más..."
+    print_warning "Device not connected yet, waiting more..."
     sleep 30
 fi
 
 if ! adb devices | grep -q "device"; then
-    print_error "Device no se conectó después del reboot"
+    print_error "Device did not connect after reboot"
     exit 1
 fi
 
-print_success "Device rebooteado exitosamente"
+print_success "Device rebooted successfully"
 
 #################################################################################
-# PASO 7: MANUAL - Instalar APatch persistentemente
+# STEP 7: MANUAL - Install APatch persistently
 #################################################################################
 
-print_warning "PASO 7: Instalación Persistente (Manual)"
+print_warning "STEP 7: Persistent Installation (Manual)"
 print_status "=========================================="
 echo ""
-echo -e "${YELLOW}EN EL DEVICE:${NC}"
+echo -e "${YELLOW}ON THE DEVICE:${NC}"
 echo ""
-echo "1. Abre la app ${BLUE}APatch${NC} nuevamente"
-echo "2. Presiona ${BLUE}'Instalar'${NC} (Install)"
-echo "3. Presiona ${BLUE}'OK'${NC} y espera a que complete (1-2 minutos)"
-echo "4. Verás mensajes de instalación"
-echo "5. Cuando termine, presiona ${BLUE}'OK'${NC}"
+echo "1. Open ${BLUE}APatch${NC} app again"
+echo "2. Press ${BLUE}'Install'${NC} (Install)"
+echo "3. Press ${BLUE}'OK'${NC} and wait for completion (1-2 minutes)"
+echo "4. You'll see installation messages"
+echo "5. When done, press ${BLUE}'OK'${NC}"
 echo ""
-print_status "Vuelve aquí cuando hayas terminado"
+print_status "Come back here when finished"
 echo ""
 ask_continue
 
 #################################################################################
-# PASO 8: Verificar root
+# STEP 8: Verify root
 #################################################################################
 
-print_status "PASO 8: Verificando root..."
+print_status "STEP 8: Verifying root..."
 
-# Activar ADB root si es necesario
+# Enable ADB root if needed
 adb root > /dev/null 2>&1 || true
 sleep 2
 
 if adb shell "su -c 'id'" | grep -q "uid=0(root)"; then
-    print_success "ROOT FUNCIONAL ✓"
+    print_success "ROOT FUNCTIONAL ✓"
 else
-    print_error "Root no disponible"
+    print_error "Root not available"
     exit 1
 fi
 
 #################################################################################
-# PASO 9: Verificar persistencia (Reboot final)
+# STEP 9: Verify persistence (Final reboot)
 #################################################################################
 
-print_status "PASO 9: Verificando persistencia..."
-print_status "Rebooteando device..."
+print_status "STEP 9: Verifying persistence..."
+print_status "Rebooting device..."
 
 adb reboot
-print_status "Esperando device (60 segundos)..."
+print_status "Waiting for device (60 seconds)..."
 sleep 60
 
 if ! adb devices | grep -q "device"; then
-    print_warning "Device no conectado, esperando más..."
+    print_warning "Device not connected, waiting more..."
     sleep 30
 fi
 
-# Verificar root después del reboot
+# Verify root after reboot
 if adb shell "su -c 'id'" 2>/dev/null | grep -q "uid=0(root)"; then
-    print_success "ROOT PERSISTENTE ✓✓✓"
+    print_success "PERSISTENT ROOT ✓✓✓"
     echo ""
     print_success "=========================================="
-    print_success "¡ROOT INSTALACIÓN COMPLETADA EXITOSAMENTE!"
+    print_success "ROOT INSTALLATION COMPLETED SUCCESSFULLY!"
     print_success "=========================================="
     echo ""
     adb shell "su -c 'id'"
 else
-    print_error "Root NO es persistente después del reboot"
-    print_status "Intenta abrir APatch nuevamente y presionar 'Instalar'"
+    print_error "Root NOT persistent after reboot"
+    print_status "Try opening APatch again and pressing 'Install'"
     exit 1
 fi
 
-print_success "Instalación finalizada"
+print_success "Installation finished"

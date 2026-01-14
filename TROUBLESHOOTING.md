@@ -1,10 +1,10 @@
 # 🛠️ TROUBLESHOOTING - root-doha-apatch
 
-## Problemas Comunes
+## Common Problems
 
 ### ❌ `adb: device not found`
 
-**Síntomas:**
+**Symptoms:**
 ```
 $ adb devices
 List of devices attached
@@ -12,75 +12,75 @@ $ ./setup_apatch.sh
 adb: device not found
 ```
 
-**Causas posibles:**
-1. USB Debugging no está habilitado
-2. La computadora no está autorizada en el device
-3. Cable USB defectuoso
-4. Drivers ADB no están instalados
+**Possible causes:**
+1. USB Debugging not enabled
+2. Computer not authorized on device
+3. Defective USB cable
+4. ADB drivers not installed
 
-**Soluciones:**
+**Solutions:**
 
-**Paso 1: Habilitar USB Debugging**
+**Step 1: Enable USB Debugging**
 ```bash
-# En el DEVICE (físicamente):
-Ajustes
-  > Sistema
-    > Información del dispositivo
-      > Tap "Número de compilación" 7 veces
-        ← Device dirá "Ya eres desarrollador"
+# On the DEVICE (physically):
+Settings
+  > System
+    > About phone
+      > Tap "Build number" 7 times
+        ← Device will say "You are now a developer"
 
-Ajustes
-  > Sistema
-    > Opciones de desarrollador
-      > Depuración USB ✓ (habilitar)
+Settings
+  > System
+    > Developer options
+      > USB Debugging ✓ (enable)
 ```
 
-**Paso 2: Autorizar esta computadora**
+**Step 2: Authorize this computer**
 ```bash
-# Conecta cable USB
-# En el device debe aparecer pop-up:
-# "¿Permitir depuración USB desde este dispositivo?"
-# ✓ Presiona PERMITIR
-# ✓ Marca "Recordar esta selección" (opcional)
+# Connect USB cable
+# Pop-up should appear on device:
+# "Allow USB debugging from this computer?"
+# ✓ Press ALLOW
+# ✓ Check "Always allow from this computer" (optional)
 ```
 
-**Paso 3: Reconectar ADB**
+**Step 3: Reconnect ADB**
 ```bash
 adb kill-server
 adb start-server
 adb devices
-# Debe mostrar: ZY2276XGKK device
+# Should show: ZY2276XGKK device
 ```
 
-**Si sigue sin funcionar:**
+**If still not working:**
 ```bash
-# Reinstala drivers
-fastboot --version  # Verificar instalación
+# Reinstall drivers
+fastboot --version  # Verify installation
 
-# En Windows (usar zadig si es necesario)
-# En Linux: ya está incluido en android-platform-tools
-# En macOS: brew install android-platform-tools
+# On Windows (use zadig if needed)
+# On Linux: already included in android-platform-tools
+# On macOS: brew install android-platform-tools
 ```
 
 ---
 
 ### ❌ `APatch.apk not found`
 
-**Síntomas:**
+**Symptoms:**
 ```
 ./setup_apatch.sh
-[✗] APatch.apk no encontrado en la carpeta actual
+[✗] APatch.apk not found in current folder
 ```
 
-**Solución:**
+**Solution:**
 ```bash
-# Descarga desde:
+# Download from:
 # https://github.com/bmax121/APatch/releases
 
-# O copia si ya la tienes:
+# Or copy if you already have it:
 cp ~/Downloads/APatch.apk .
 
-# Verifica:
+# Verify:
 ls -lh APatch.apk
 ```
 
@@ -88,181 +88,181 @@ ls -lh APatch.apk
 
 ### ❌ `dd: permission denied`
 
-**Síntomas:**
+**Symptoms:**
 ```
-Extrayendo boot.img...
+Extracting boot.img...
 dd: open('/dev/block/bootdevice/by-name/boot_b'): Permission denied
 ```
 
-**Causa:**
-El comando `adb root` no funcionó correctamente.
+**Cause:**
+The `adb root` command didn't work correctly.
 
-**Solución:**
+**Solution:**
 ```bash
-# En la PC:
+# On PC:
 adb kill-server
 adb start-server
 adb root
 sleep 2
 
-# Verifica que ahora devuelva uid=0:
+# Verify now returns uid=0:
 adb shell "id"
 # uid=0(root) gid=0(root) ...
 
-# Si sigue sin funcionar:
-# 1. Rebootea el device
-# 2. Habilita "Opciones de desarrollador" nuevamente
-# 3. Vuelve a ejecutar el script
+# If still not working:
+# 1. Reboot device
+# 2. Enable "Developer options" again
+# 3. Run script again
 ```
 
 ---
 
-### ❌ `Boot image not found` (en device)
+### ❌ `Boot image not found` (on device)
 
-**Síntomas:**
-Durante el paso de parcheo, APatch no ve el boot.img
+**Symptoms:**
+During patching step, APatch can't see boot.img
 
-**Causa:**
-El archivo no se copió correctamente al device, o APatch busca en ubicación diferente.
+**Cause:**
+File not copied correctly to device, or APatch looking in different location.
 
-**Solución:**
+**Solution:**
 ```bash
-# Verifica qué archivos hay en el device:
+# Verify what files on device:
 adb shell "ls -la /sdcard/"
 adb shell "ls -la /sdcard/Downloads/"
 adb shell "ls -la /data/local/tmp/"
 
-# Si no está, cópialo manualmente:
+# If not there, copy manually:
 adb push boot_b.img /sdcard/
 adb push boot_b.img /data/local/tmp/
 
-# Luego en APatch:
-"Select boot image" → navega a /sdcard/ o /data/local/tmp/
+# Then in APatch:
+"Select boot image" → navigate to /sdcard/ or /data/local/tmp/
 ```
 
 ---
 
-### ❌ `Boot parchado not found` después del parcheo
+### ❌ `Patched boot not found` after patching
 
-**Síntomas:**
+**Symptoms:**
 ```
-[✗] No se encontró boot parchado en el device
-Ubicaciones esperadas:
+[✗] No patched boot found on device
+Expected locations:
   - /data/adb/ap/backup/boot.img
   - /data/adb/ap/backup/boot_patched.img
   - ...
 ```
 
-**Causas:**
-1. El parcheo falló en la app APatch
-2. APatch guarda en ubicación diferente
-3. Permisos de archivo
+**Causes:**
+1. Patching failed in APatch app
+2. APatch saves in different location
+3. File permissions
 
-**Solución:**
+**Solution:**
 
-**Opción A: Exportar manualmente desde APatch**
+**Option A: Export manually from APatch**
 ```bash
-# En el device en la app APatch:
-# Después de presionar "Patch", busca un botón "Export" o "Save"
-# Guarda el archivo a /sdcard/
+# On device in APatch app:
+# After clicking "Patch", look for "Export" or "Save" button
+# Save file to /sdcard/
 
-# Luego en la PC:
+# Then on PC:
 adb pull /sdcard/boot_patched.img ./
 adb push boot_patched.img /data/local/tmp/boot_patched.img
 ```
 
-**Opción B: Buscar en ubicaciones alternativas**
+**Option B: Search in alternative locations**
 ```bash
-# En la PC:
+# On PC:
 adb shell "find /data -name '*boot*' -o -name '*patch*' 2>/dev/null"
 adb shell "find /sdcard -name '*boot*' -o -name '*patch*' 2>/dev/null"
 
-# Una vez encontrado:
-adb pull /ruta/encontrada/boot_patched.img ./
+# Once found:
+adb pull /found/path/boot_patched.img ./
 ```
 
-**Opción C: Reintentar parcheo**
+**Option C: Retry patching**
 ```bash
-# En el device:
-# Abre APatch nuevamente
+# On device:
+# Open APatch again
 # "Select boot image" → boot_b.img
-# "Patch" → espera completación
-# Presiona "OK"
-# Espera a que muestre ubicación del archivo guardado
+# "Patch" → wait for completion
+# Press "OK"
+# Wait to see where file was saved
 ```
 
 ---
 
-### ❌ `Device no bootea` después del flasheo
+### ❌ `Device doesn't boot` after flashing
 
-**Síntomas:**
-- Device se queda en bootloader
-- O cuelga en LineageOS splash screen
-- O rebootea indefinidamente
+**Symptoms:**
+- Device stuck in bootloader
+- Or hangs on LineageOS splash screen
+- Or infinite reboots
 
-**Importancia:** ⚠️ CRÍTICO - Posible soft-brick
+**Importance:** ⚠️ CRITICAL - Possible soft-brick
 
-**Solución (Recovery):**
+**Solution (Recovery):**
 
 ```bash
-# 1. Rebootea a recovery
+# 1. Reboot to recovery
 fastboot reboot recovery
 
-# 2. En recovery: "Wipe data/factory reset"
-# 3. En recovery: Flashea ROM completo nuevamente
+# 2. In recovery: "Wipe data/factory reset"
+# 3. In recovery: Flash complete ROM again
 adb reboot recovery
-# Luego en recovery: Apply update from ADB > sideload
+# Then in recovery: Apply update from ADB > sideload
 adb sideload lineage-22.1-*.zip
 
-# 4. Rebootea
+# 4. Reboot
 adb reboot
 
-# 5. El device debería bootear normalmente (sin root)
-# 6. Vuelve a ejecutar el script desde el principio
+# 5. Device should boot normally (without root)
+# 6. Start script again from beginning
 ```
 
-**Si recovery tampoco arranca:**
+**If recovery also doesn't boot:**
 ```bash
-# Contacta a soporte de APatch o revertir a firmware stock
+# Contact APatch support or restore to stock firmware
 ```
 
 ---
 
-### ⚠️ `APatch muestra "Instalar" después del reboot`
+### ⚠️ `APatch shows "Install" after reboot`
 
-**Síntomas:**
-- Después del primer reboot, abres APatch
-- Dice "Funcionando" pero también "Instalar"
-- Esto es NORMAL
+**Symptoms:**
+- After first reboot, open APatch
+- Says "Running" but also shows "Install"
+- This is NORMAL
 
-**Explicación:**
-APatch no había instalado sus binarios persistentes en `/system/bin/su` todavía.
+**Explanation:**
+APatch hadn't installed its persistent binaries in `/system/bin/su` yet.
 
-**Solución (Normal):**
+**Solution (Normal):**
 ```bash
-# Esto es ESPERADO después del primer reboot
+# This is EXPECTED after first reboot
 
-# 1. Abre APatch en el device
-# 2. Presiona "Instalar"
-# 3. Espera 1-2 minutos
-# 4. Presiona "OK"
-# 5. Rebootea nuevamente
+# 1. Open APatch on device
+# 2. Press "Install"
+# 3. Wait 1-2 minutes
+# 4. Press "OK"
+# 5. Reboot again
 adb reboot
 sleep 60
 
-# 6. Verifica que ahora persiste:
+# 6. Verify now persists:
 adb shell "su -c 'id'"
-# uid=0(root) ← SI PERSISTE, ¡éxito!
+# uid=0(root) ← IF PERSISTS, success!
 ```
 
 ---
 
-### ❌ `Root desaparece después del reboot`
+### ❌ `Root disappears after reboot`
 
-**Síntomas:**
+**Symptoms:**
 ```bash
 adb shell "su -c 'id'"
-# Funciona
+# Works
 
 adb reboot
 sleep 60
@@ -270,148 +270,148 @@ adb shell "su -c 'id'"
 # /system/bin/sh: su: inaccessible or not found
 ```
 
-**Causa:**
-APatch no completó la instalación persistente correctamente.
+**Cause:**
+APatch didn't complete persistent installation correctly.
 
-**Solución:**
+**Solution:**
 
-**Paso 1: Reinstalar desde APatch**
+**Step 1: Reinstall from APatch**
 ```bash
-# En el device:
-# 1. Abre APatch
-# 2. Presiona "Instalar" (Install)
-# 3. Espera completación
-# 4. Presiona "OK"
+# On device:
+# 1. Open APatch
+# 2. Press "Install" (Install)
+# 3. Wait for completion
+# 4. Press "OK"
 ```
 
-**Paso 2: Reboot de confirmación**
+**Step 2: Reboot confirmation**
 ```bash
-# En la PC:
+# On PC:
 adb reboot
 sleep 60
 adb shell "su -c 'id'"
-# Debe mostrar uid=0(root)
+# Should show uid=0(root)
 ```
 
-**Paso 3: Si aún no persiste**
+**Step 3: If still not persistent**
 ```bash
-# Posible corrupción de /system
-# Reflashea ROM completamente:
+# Possible /system corruption
+# Reflash ROM completely:
 
 adb reboot recovery
-# En recovery: Wipe data/factory reset
-# En recovery: Apply update from ADB
+# In recovery: Wipe data/factory reset
+# In recovery: Apply update from ADB
 adb sideload lineage-22.1-*.zip
 
-# Luego vuelve a intentar el root desde el principio
+# Then try rooting from beginning
 bash setup_apatch.sh
 ```
 
 ---
 
-### ⚠️ `SELinux violations en logs`
+### ⚠️ `SELinux violations in logs`
 
-**Síntomas:**
+**Symptoms:**
 ```bash
 adb shell "logcat -d | grep -i 'avc.*denied'"
-# Múltiples líneas de "avc: denied"
+# Multiple "avc: denied" lines
 ```
 
-**Explicación:**
-Es normal que APatch genere algunos SELinux denials. No afecta funcionalidad.
+**Explanation:**
+It's normal for APatch to generate some SELinux denials. Doesn't affect functionality.
 
-**Verificación:**
+**Verification:**
 ```bash
-# Si root aún funciona, ignora los warnings:
+# If root still works, ignore warnings:
 adb shell "su -c 'id'"
-# uid=0(root) ← Si funciona, está todo bien
+# uid=0(root) ← If works, all good
 ```
 
 ---
 
-### ❌ `Script falla al buscar boot parchado`
+### ❌ `Script fails to find patched boot`
 
-**Síntomas:**
+**Symptoms:**
 ```
-[✗] No se encontró boot parchado en el device
-Solución: intenta exportar manualmente desde APatch
+[✗] No patched boot found on device
+Solution: try exporting manually from APatch
 ```
 
-**Pasos manuales:**
+**Manual steps:**
 
 ```bash
-# 1. En el device en APatch:
-# - Presiona "Select boot image" → boot_b.img
-# - Presiona "Patch"
-# - Cuando termine, busca un botón "Export" o similar
-# - Guarda a /sdcard/boot_patched.img
+# 1. On device in APatch:
+# - Press "Select boot image" → boot_b.img
+# - Press "Patch"
+# - When done, look for "Export" or similar button
+# - Save to /sdcard/boot_patched.img
 
-# 2. En la PC:
+# 2. On PC:
 adb pull /sdcard/boot_patched.img ./
 
-# 3. Flashea manualmente:
+# 3. Flash manually:
 adb push boot_patched.img /data/local/tmp/
 adb root
 sleep 2
 adb shell "dd if=/data/local/tmp/boot_patched.img of=/dev/block/mmcblk0p54 bs=4M && sync"
 adb reboot
 
-# 4. Continúa con verificación manual
+# 4. Continue with manual verification
 ```
 
 ---
 
-## Verificación de Salud del Sistema
+## System Health Verification
 
-Después de completar la instalación, verifica:
+After completing installation, verify:
 
 ```bash
-# 1. Root funcional
+# 1. Root functional
 adb shell "su -c 'id'"
-# Debe mostrar: uid=0(root) gid=0(root)
+# Should show: uid=0(root) gid=0(root)
 
-# 2. Binarios en lugar
+# 2. Binaries in place
 adb shell "ls -la /system/bin/su"
-# -rwxr-xr-x (o similar)
+# -rwxr-xr-x (or similar)
 
-# 3. Kernel patch activo
+# 3. Kernel patch active
 adb shell "dmesg | grep -i 'kpatch\|apatch'" | head
-# Puede no mostrar nada (es ok)
+# May not show anything (it's ok)
 
-# 4. APatch app instalada
+# 4. APatch app installed
 adb shell "pm list packages | grep apatch"
 # package:me.bmax.apatch
 
-# 5. Reboot y persistencia
+# 5. Reboot and persistence
 adb reboot
 sleep 60
 adb shell "su -c 'id'"
-# Debe persistir
+# Should persist
 ```
 
 ---
 
-## Contacto/Soporte
+## Contact/Support
 
-Si el problema persiste:
+If problem persists:
 
-1. **Revisa logs detallados:**
+1. **Review detailed logs:**
    ```bash
    adb logcat -d > logcat.txt
    adb shell "cat /tmp/recovery.log" > recovery.txt
    adb shell "dmesg > dmesg.txt"
    ```
 
-2. **Repositorios de soporte:**
+2. **Support repositories:**
    - APatch Issues: https://github.com/bmax121/APatch/issues
    - LineageOS doha: XDA-Developers forum
 
-3. **Información útil para reporte:**
-   - Output de `adb shell "getprop"`
-   - Logs de `logcat`, `dmesg`, `recovery.log`
-   - Versión de APatch exacta
-   - Versión de LineageOS
+3. **Useful info for report:**
+   - Output of `adb shell "getprop"`
+   - Logs from `logcat`, `dmesg`, `recovery.log`
+   - Exact APatch version
+   - LineageOS version
 
 ---
 
-**Última actualización:** 2026-01-14 | **Versión:** 1.0
+**Last updated:** 2026-01-14 | **Version:** 1.0
