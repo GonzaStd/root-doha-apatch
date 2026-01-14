@@ -1,5 +1,7 @@
 # Adapting This Repository for Other Devices
 
+*Part of the [root-doha-apatch](https://github.com/GonzaStd/root-doha-apatch) project by [@GonzaStd](https://github.com/GonzaStd)*
+
 This document explains how to adapt the root installation procedures for other Android devices, particularly Motorola phones.
 
 ---

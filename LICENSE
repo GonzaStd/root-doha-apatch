@@ -1,6 +1,8 @@
-MIT License
+# License
 
-Copyright (c) 2026 root-doha-apatch Contributors
+## Primary License: MIT License
+
+Copyright (c) 2026 GonzaStd and root-doha-apatch Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +21,49 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Third-Party Project Licenses
+
+This repository references and/or uses the following third-party projects.
+Please refer to their respective licenses:
+
+### APatch
+- **License**: GNU General Public License v3.0 (GPL-3.0)
+- **Author**: bmax121
+- **GitHub**: https://github.com/bmax121/APatch
+- **License Text**: https://github.com/bmax121/APatch/blob/main/LICENSE
+
+### LineageOS
+- **License**: Apache License 2.0
+- **Website**: https://lineageos.org
+- **Source**: https://github.com/LineageOS
+- **License Text**: https://github.com/LineageOS/android/blob/lineage-22.1/LICENSE
+
+### Android SDK Platform Tools (adb, fastboot)
+- **License**: Apache License 2.0
+- **Author**: Google LLC
+- **Website**: https://developer.android.com/
+- **License Text**: https://developer.android.com/license
+
+### LineageOS Documentation & Wiki
+- **License**: Creative Commons Attribution 3.0 Unported (CC-BY-3.0)
+- **Website**: https://wiki.lineageos.org
+
+---
+
+## Important Notice
+
+This repository is NOT affiliated with:
+- Motorola Inc.
+- Google LLC
+- LineageOS Project
+- Any device manufacturers or OEMs
+
+Each referenced project is independently licensed and maintained by their
+respective authors and organizations. Users are responsible for reviewing and
+agreeing to the licenses of each tool and project they use.
+
+When using this repository, you agree to comply with the licenses of ALL
+referenced third-party projects.

@@ -323,11 +323,31 @@ Use freely, modify and distribute while crediting the original source.
 
 ---
 
-## 🙋 Credits
+## 🙋 Credits & Attribution
 
-- **APatch**: [bmax121/APatch](https://github.com/bmax121/APatch)
-- **LineageOS**: [LineageOS Project](https://lineageos.org)
-- **Motorola Moto G8 Plus**: Community XDA-Developers
+### Repository Author
+- **GonzaStd** - Initial setup, documentation, and automation scripts
+  - GitHub: [@GonzaStd](https://github.com/GonzaStd)
+
+### Referenced Projects
+- **APatch** - Root tool by [bmax121](https://github.com/bmax121/APatch)
+  - License: GPL-3.0
+  - GitHub: https://github.com/bmax121/APatch
+  
+- **LineageOS** - Custom Android ROM
+  - License: Apache 2.0
+  - Website: https://lineageos.org
+  
+- **Motorola** - Device bootloader and official unlock portal
+  - Bootloader Unlock Portal: https://motorola-global-portal.custhelp.com/
+  
+- **Android SDK** - Platform tools (adb, fastboot)
+  - License: Apache 2.0
+  - Source: https://developer.android.com/
+
+### Community
+- **XDA-Developers** - Community forums and device-specific guides
+- **LineageOS Community** - Device maintainers and ROM development
 
 ---
 
