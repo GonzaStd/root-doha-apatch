@@ -33,12 +33,14 @@ This repository uses or references third-party projects:
 
 Each has its own license and terms. Refer to their respective documentation.
 
-### This Repository
+### About This Repository
 
-- NOT affiliated with Motorola, Google, or any manufacturer
-- Tested specifically on **Moto G8 Plus (doha)** with **LineageOS 22.1**
+- **NOT affiliated with Motorola, Google, or any manufacturer**
+- **Tested specifically on Moto G8 Plus (doha) with LineageOS 22.1** - This is a real procedure that was executed on the author's device and successfully verified
+- **Scripts NOT manually tested** - The documentation and automation scripts in this repository were created with the assistance of GitHub Copilot and are based on the successful manual procedure performed on the author's device. The scripts have not been independently tested and should be considered experimental
+- **Manual testing required** - Community members or other developers will need to validate the scripts through manual testing before they can be considered production-ready
 - Procedures may differ significantly on other devices
-- Community contributions for other devices are welcome (see [ADAPTATION.md](ADAPTATION.md))
+- Community contributions and testing for other devices are welcome (see [ADAPTATION.md](ADAPTATION.md))
 
 ---
 
@@ -328,6 +330,7 @@ Use freely, modify and distribute while crediting the original source.
 ### Repository Author
 - **GonzaStd** - Initial setup, documentation, and automation scripts
   - GitHub: [@GonzaStd](https://github.com/GonzaStd)
+  - **Developed with GitHub Copilot** - Documentation and scripts created with the assistance of GitHub Copilot AI assistant
 
 ### Referenced Projects
 - **APatch** - Root tool by [bmax121](https://github.com/bmax121/APatch)
@@ -351,13 +354,22 @@ Use freely, modify and distribute while crediting the original source.
 
 ---
 
+## � Important Notes
+
+- This repository documents a working procedure from the author's Moto G8 Plus device
+- Scripts in this repository were generated with GitHub Copilot and require community testing
+- If you encounter issues, research your specific device and ROM at XDA-Developers forums
+- For APatch-specific issues, refer to the [official APatch project](https://github.com/bmax121/APatch)
+
+---
+
 ## 📞 Support
 
 For specific issues:
 1. Check [Troubleshooting](TROUBLESHOOTING.md) above
 2. Review logs: `adb shell "logcat -d | grep -i 'apatch\|kpatch\|su'"`
-3. Report at [APatch Issues](https://github.com/bmax121/APatch/issues)
-4. For device adaptation questions, open an issue in this repository
+3. For APatch-specific issues, visit [APatch Issues](https://github.com/bmax121/APatch/issues)
+4. For device-specific help, consult XDA-Developers forums
 
 ---
 

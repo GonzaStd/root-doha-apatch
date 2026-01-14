@@ -1,8 +1,10 @@
 # Unlocking Motorola Bootloader
 
-*Part of the [root-doha-apatch](https://github.com/GonzaStd/root-doha-apatch) project by [@GonzaStd](https://github.com/GonzaStd)*
+*Part of the [root-doha-apatch](https://github.com/GonzaStd/root-doha-apatch) project by [@GonzaStd](https://github.com/GonzaStd) - Created with GitHub Copilot*
 
 Complete guide to unlock the bootloader on Motorola Moto G8 Plus (and other Motorola devices).
+
+**⚠️ Note:** This guide is based on the author's successful manual procedure. The accompanying scripts have not been independently tested.
 
 ## ⚠️ Important Warnings
 

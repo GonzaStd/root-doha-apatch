@@ -1,6 +1,8 @@
 # Adapting This Repository for Other Devices
 
-*Part of the [root-doha-apatch](https://github.com/GonzaStd/root-doha-apatch) project by [@GonzaStd](https://github.com/GonzaStd)*
+*Part of the [root-doha-apatch](https://github.com/GonzaStd/root-doha-apatch) project by [@GonzaStd](https://github.com/GonzaStd) - Created with GitHub Copilot*
+
+**⚠️ Important:** This repository's scripts are experimental and based on the author's successful manual procedure. Community members must validate and test the scripts through manual testing before they can be considered reliable for other devices or configurations. Your careful testing and feedback is essential for making this project useful to others.
 
 This document explains how to adapt the root installation procedures for other Android devices, particularly Motorola phones.
 
