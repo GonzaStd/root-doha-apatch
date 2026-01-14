@@ -1,0 +1,27 @@
+# Archivos del device
+*.img
+*.img.bak
+boot_a.img
+boot_b.img
+boot_patched_*.img
+boot_original_*.img
+
+# Archivos temporales
+*.tmp
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Directorio de descargas
+downloads/
+cache/
+
+# APK (es muy grande)
+APatch.apk
+APatch_*.apk
+
+# Credenciales
+.env
+.secrets
